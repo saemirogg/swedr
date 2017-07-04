@@ -28,7 +28,7 @@ get_CC <- function(dx,
            incl_date=DIADAT,
            age=round(incl_date/10000,digits = 0)-YOB
     ) %>%
-    select(lop_nr,case,sex,YOB,incl_date)
+    select(lop_nr,case,sex,YOB,age,incl_date)
 
   #If incl_controls is F then to be able to add no controls we need an empty data.frame
   control_group <- data.frame(LopNr=NULL,SEX=NULL,CASE=NULL,YOB=NULL,InclDate=NULL)
@@ -43,7 +43,7 @@ get_CC <- function(dx,
              case=F,
              age = round(incl_date/10000,digits = 0)-YOB
       )%>%
-      select(lop_nr,case,sex,YOB,incl_date)
+      select(lop_nr,case,sex,YOB,age,incl_date)
   }
 
   #Joining the two datasets and excluding cases that are also controls and only using individuals as controls once check2
