@@ -13,14 +13,18 @@ add_event <- function(dx,
                       cancer=F){
 
   #If the search is in the cancer registry(cancer==T)
+  # Sölvi: Need to throw error if dia_data is not from the cancer registry
   if(cancer){
     dia_data <- select(dia_data,lop_nr=LopNr,INDATUMA=DIADAT,ICDO10,ICD9,ICD7,ICDO3) %>%
       mutate(DIAGNOS=paste(ICDO10,ICD7,ICD9,ICDO3))
   }
 
   #If dx is not put in as a fully formated regex query we make it formated.
+  # Sölvi: Consider removing if(length(dx)>1), since paste works fine on vectors of length equal to 1. Note that this does not work for
+  #length(dx)==1 since the spacing is not provided
   if(length(dx)>1){
     dx <- paste(" ",paste(dx,collapse="| "),sep="")
+    #Sölvi: If there is only one code then length(dx)==1 and thus this is not needed
     if(!grepl("|",dx)){
       paste(" ",gsub(" ","",dx),sep="")#If the there is only one code for a variable it is formatted correctly by this clause
     }
@@ -34,10 +38,14 @@ add_event <- function(dx,
 
   #Adding inclusion date and time from inclusion date of the diagnosis
   dia_data$incl_date <- part_data$incl_date[match(dia_data$lop_nr,part_data$lop_nr)]
+  #Sölvi: It's cleaner to simply write a function for this date conversion in the package as a whole, this is not easily readable
   dia_data$time_from_incl <- as.numeric(with(dia_data,(as.Date(as.character(dia_data$INDATUMA),format="%Y%m%d")-as.Date(as.character(dia_data$incl_date),format="%Y%m%d"))))
 
 
   #if first, we will find the first diagnosis of dx within the dataset
+  #Sölvi: In my opinion everything before filter should be kept out of the conditional statements, makes it easier to read
+  #Sölvi: Also an alternative way is to use the which.min() and which.max() functions. I don't know whether it's faster or slower.
+  #Sölvi: It is clearer to use if,else if,else if and else to show the relationship between the conditional statements. It is also slightly faster.
   if(relationship=="first"){
     dia_data <- filter(dia_data,(time_from_incl > before_time[1] & time_from_incl < before_time[2]) | (time_from_incl > after_time[1] & time_from_incl < after_time[2]))  %>%
     group_by(lop_nr) %>%
