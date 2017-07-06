@@ -25,10 +25,12 @@ add_event <- function(dx,
   if(length(dx)>1){
     dx <- paste(" ",paste(dx,collapse="| "),sep="")
     #Sölvi: If there is only one code then length(dx)==1 and thus this is not needed
-    if(!grepl("|",dx)){
-      paste(" ",gsub(" ","",dx),sep="")#If the there is only one code for a variable it is formatted correctly by this clause
-    }
+  }else if(!grepl("|",dx) & length(dx) == 1) {
+    paste(" ",gsub(" ","",dx),sep="")#If the there is only one code for a variable it is formatted correctly by this clause
+  }else{
+    stop("dx is of length 0")
   }
+
 
   #Adding a " " in front of first diagnosis to be able to search with grepl
   dia_data$DIAGNOS <- paste(" ",dia_data$DIAGNOS,sep="")
@@ -38,37 +40,22 @@ add_event <- function(dx,
 
   #Adding inclusion date and time from inclusion date of the diagnosis
   dia_data$incl_date <- part_data$incl_date[match(dia_data$lop_nr,part_data$lop_nr)]
-  #Sölvi: It's cleaner to simply write a function for this date conversion in the package as a whole, this is not easily readable
-  dia_data$time_from_incl <- as.numeric(with(dia_data,(as.Date(as.character(dia_data$INDATUMA),format="%Y%m%d")-as.Date(as.character(dia_data$incl_date),format="%Y%m%d"))))
+  dia_data$time_from_incl <- days_diff(dia_data$incl_date,dia_data$INDATUMA)
 
 
   #if first, we will find the first diagnosis of dx within the dataset
-  #Sölvi: In my opinion everything before filter should be kept out of the conditional statements, makes it easier to read
-  #Sölvi: Also an alternative way is to use the which.min() and which.max() functions. I don't know whether it's faster or slower.
-  #Sölvi: It is clearer to use if,else if,else if and else to show the relationship between the conditional statements. It is also slightly faster.
+  dia_data <- filter(dia_data,(time_from_incl > before_time[1] & time_from_incl < before_time[2]) | (time_from_incl > after_time[1] & time_from_incl < after_time[2]))  %>%
+    group_by(lop_nr) %>%
+
   if(relationship=="first"){
-    dia_data <- filter(dia_data,(time_from_incl > before_time[1] & time_from_incl < before_time[2]) | (time_from_incl > after_time[1] & time_from_incl < after_time[2]))  %>%
-    group_by(lop_nr) %>%
     filter(INDATUMA==min(INDATUMA))
-  }
-
-  #if closest, we will find the diagnosis that is closest to the inclusion date
-  if(relationship=="closest"){
-    dia_data <- filter(dia_data,(time_from_incl > before_time[1] & time_from_incl < before_time[2]) | (time_from_incl > after_time[1] & time_from_incl < after_time[2]))  %>%
-    group_by(lop_nr) %>%
+  }else if(relationship=="closest"){
     filter(time_from_incl==min(abs(time_from_incl)))
-  }
-
-  #if last, we will find the last diagnosis regardless of inclusion date.
-  if(relationship=="last"){
-    dia_data <- filter(dia_data,(time_from_incl > before_time[1] & time_from_incl < before_time[2]) | (time_from_incl > after_time[1] & time_from_incl < after_time[2]))  %>%
-    group_by(lop_nr) %>%
+  }else if(relationship=="last"){
     filter(INDATUMA==max(INDATUMA))
-  }
-
-  if(!relationship %in% c("last","first","closest"))
+  }else{
     stop("Relationship provided (",relationship,") is not recognized")
-
+  }
   #Now creating a vector of the INDATUMA for those with diagnosis and NA if no diagnosis.
   date_of_diagnosis <- dia_data$INDATUMA[match(part_data$lop_nr,dia_data$lop_nr)]
 
