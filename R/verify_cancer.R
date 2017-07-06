@@ -7,8 +7,9 @@
 #'
 
 verify_cancer <- function(data,
-                          dx){
+                          dx,wd=getwd()){
   #load the data
+  setwd(wd)
   load("can.RData")
 
   dx <- paste(dx,collapse="|")
