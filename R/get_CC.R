@@ -54,6 +54,9 @@ get_CC <- function(dx,
     group_by(lop_nr) %>%
     filter(incl_date==min(incl_date)) #if repeated individuals are of the same case/control status then use earliest incl_date
 
+  #Adding year of diagnosis variable
+  cases_and_controls <- mutate(cases_and_controls,year_of_dia=round(incl_date/10000,digits = 0))
+
   #Creating time of death or loss to follow-up at end of the study period
   #Loading the death registry and subsetting it for the subset in question
   load("dors.RData")
