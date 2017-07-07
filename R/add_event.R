@@ -20,15 +20,13 @@ add_event <- function(dx,
   }
 
   #If dx is not put in as a fully formated regex query we make it formated.
-  # Sölvi: Consider removing if(length(dx)>1), since paste works fine on vectors of length equal to 1. Note that this does not work for
-  #length(dx)==1 since the spacing is not provided
+  # Sölvi: Changed the logic, removing a condition in the else if statement. Now nothing is
+  # done if dx is formatted correctly
   if(length(dx)>1){
     dx <- paste(" ",paste(dx,collapse="| "),sep="")
     #Sölvi: If there is only one code then length(dx)==1 and thus this is not needed
-  }else if(!grepl("|",dx) & length(dx) == 1) {
+  }else if(!grepl("|",dx)) {
     paste(" ",gsub(" ","",dx),sep="")#If the there is only one code for a variable it is formatted correctly by this clause
-  }else{
-    stop("dx is of length 0")
   }
 
 
@@ -45,14 +43,14 @@ add_event <- function(dx,
 
   #if first, we will find the first diagnosis of dx within the dataset
   dia_data <- filter(dia_data,(time_from_incl > before_time[1] & time_from_incl < before_time[2]) | (time_from_incl > after_time[1] & time_from_incl < after_time[2]))  %>%
-    group_by(lop_nr) %>%
+    group_by(lop_nr)
 
   if(relationship=="first"){
-    filter(INDATUMA==min(INDATUMA))
+    dia_data <- filter(dia_data,INDATUMA==min(INDATUMA))
   }else if(relationship=="closest"){
-    filter(time_from_incl==min(abs(time_from_incl)))
+    dia_data <- filter(dia_data,time_from_incl==min(abs(time_from_incl)))
   }else if(relationship=="last"){
-    filter(INDATUMA==max(INDATUMA))
+    dia_data <- filter(dia_data,INDATUMA==max(INDATUMA))
   }else{
     stop("Relationship provided (",relationship,") is not recognized")
   }
