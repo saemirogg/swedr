@@ -46,11 +46,11 @@ add_event <- function(dx,
     group_by(lop_nr)
 
   if(relationship=="first"){
-    dia_data <- filter(dia_data,INDATUMA==min(INDATUMA))
+    dia_data <- filter(dia_data,which.min(INDATUMA))
   }else if(relationship=="closest"){
-    dia_data <- filter(dia_data,time_from_incl==min(abs(time_from_incl)))
+    dia_data <- filter(dia_data,which.min(abs(time_from_incl)))
   }else if(relationship=="last"){
-    dia_data <- filter(dia_data,INDATUMA==max(INDATUMA))
+    dia_data <- filter(dia_data,which.max(INDATUMA))
   }else{
     stop("Relationship provided (",relationship,") is not recognized")
   }
