@@ -6,7 +6,7 @@
 #'
 
 
-add_cancer <- function(part_data,dx_path,wd=getwd()){
+add_cancer <- function(part_data,dx_path,wd=getwd(),ignore=NULL){
 
   #set original wd and set up new wd
   or_wd <- getwd()
@@ -39,7 +39,8 @@ add_cancer <- function(part_data,dx_path,wd=getwd()){
                             relationship=x[["relationship"]],
                             before_time=c(x[["before_time1"]],x[["before_time2"]]),
                             after_time=c(x[["after_time1"]],x[["after_time2"]]),
-                            cancer=T)
+                            cancer=T,
+                            ignore= variable_name %in% ignore)
                           }
   )
 
