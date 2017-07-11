@@ -25,7 +25,7 @@ add_cancer <- function(part_data,dx_path,wd=getwd(),ignore=NULL){
 
   #Adding data for the interpretation of each value (time, relationship etc.)
   dx <- read_excel(path=dx_path,sheet=2) %>%
-    slice(match(.$variable_name,dx_codes$variable_name)) %>%
+    slice(match(dx_codes$variable_name,.$variable_name)) %>%
     select(2:ncol(.)) %>%
     bind_cols(dx_codes,.)
 
@@ -40,18 +40,29 @@ add_cancer <- function(part_data,dx_path,wd=getwd(),ignore=NULL){
                             before_time=c(x[["before_time1"]],x[["before_time2"]]),
                             after_time=c(x[["after_time1"]],x[["after_time2"]]),
                             cancer=T,
+                            exclude_outside=x[["exclude_outside"]]
                             ignore= variable_name %in% ignore)
                           }
   )
 
-  #The result is variable_name x dates matrix and needs to be transposed and turned into a data frame
-  #This is not necessary and will throw an error if there is only one variable
-  new_data <- as.data.frame(t(new_data))
+  #The result is variable_name x dates matrix and needs to be transposed and turned into a data frame and combined with the original part data
+  output_data <- bind_cols(part_data,as.data.frame(t(new_data)))
+
+  #Finding those that are included, i.e. have not been excluded in the add_event function
+  #There they have been marked as a 0 so if there is a zero in the line the participant is excluded
+  included <- !(apply(t(new_data),1,FUN=function(x){any(x==0,na.rm = T)}))
+
+
+  #Removing participants marked for exclusion
+  output_data <- filter(output_data, included)
+
+  if(any(!included)){
+    warning(sum(!(included))," participants met the exclusion criteria and were excluded")
+  }
 
   #Setting back to original wd
   setwd(or_wd)
 
-  #Returning the part_data dataset with the variables bound in new columns.
-  return(bind_cols(part_data,new_data))
+  return(output_data)
 
 }
