@@ -10,7 +10,8 @@ add_event <- function(dx,
                       relationship="first",
                       before_time=c(-Inf,0),
                       after_time=c(0,Inf),
-                      cancer=F){
+                      cancer=F,
+                      ignore=F){
 
   #If the search is in the cancer registry(cancer==T)
   # Sölvi: Need to throw error if dia_data is not from the cancer registry
@@ -24,7 +25,6 @@ add_event <- function(dx,
   # done if dx is formatted correctly
   if(length(dx)>1){
     dx <- paste(" ",paste(dx,collapse="| "),sep="")
-    #Sölvi: If there is only one code then length(dx)==1 and thus this is not needed
   }else if(!grepl("|",dx)) {
     paste(" ",gsub(" ","",dx),sep="")#If the there is only one code for a variable it is formatted correctly by this clause
   }
@@ -34,7 +34,11 @@ add_event <- function(dx,
   dia_data$DIAGNOS <- paste(" ",dia_data$DIAGNOS,sep="")
 
   #pulling out only relevant rows of dia_data to speed up later analysis
-  dia_data <- filter(dia_data,grepl(dx,DIAGNOS))
+  if(ignore==F){
+    dia_data <- filter(dia_data,grepl(dx,DIAGNOS))
+  }else{
+    dia_data <- filter(dia_data,!grepl(dx,DIAGNOS))
+  }
 
   #Adding inclusion date and time from inclusion date of the diagnosis
   dia_data$incl_date <- part_data$incl_date[match(dia_data$lop_nr,part_data$lop_nr)]
