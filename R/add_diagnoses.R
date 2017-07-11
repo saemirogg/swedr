@@ -18,7 +18,7 @@ add_diagnoses <- function(part_data,dia_data,dx_path){
 
   #Adding data for the interpretation of each value (time, relationship etc.)
   dx <- read_excel(path=dx_path,sheet=2) %>%
-    slice(match(.$variable_name,dx_codes$variable_name)) %>%
+    slice(match(dx_codes$variable_name,.$variable_name)) %>%
     select(2:ncol(.)) %>%
     bind_cols(dx_codes,.)
 
@@ -32,14 +32,27 @@ add_diagnoses <- function(part_data,dia_data,dx_path){
                            dx=x[["dia_codes"]],
                            relationship=x[["relationship"]],
                            before_time=c(x[["before_time1"]],x[["before_time2"]]),
-                           after_time=c(x[["after_time1"]],x[["after_time2"]]))
+                           after_time=c(x[["after_time1"]],x[["after_time2"]]),
+                           exclude_outside=x[["exclude_outside"]])
                           }
   )
 
-  #The result is variable_name x dates matrix and needs to be transposed and turned into a data frame
-  new_data <- as.data.frame(t(new_data))
+  #The result is variable_name x dates matrix and needs to be transposed and turned into a data frame and combined with the original part data
+  output_data <- bind_cols(part_data,as.data.frame(t(new_data)))
 
-  #Returning the part_data dataset with the variables bound in new columns.
-  return(bind_cols(part_data,new_data))
+  #Finding those that are included, i.e. have not been excluded in the add_event function
+  #There they have been marked as a 0 so if there is a zero in the line the participant is excluded
+  included <- !(apply(t(new_data),1,FUN=function(x){any(x==0,na.rm = T)}))
+
+
+  #Removing participants marked for exclusion
+  output_data <- filter(output_data, included)
+
+  if(any(!included)){
+    warning(sum(!(included))," participants met the exclusion criteria and were excluded")
+  }
+
+
+  return(output_data)
 
 }
