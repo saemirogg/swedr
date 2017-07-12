@@ -29,9 +29,9 @@ verify_cancer <- function(partdata,
           "%) cases are not in the cancer registry. There are ",sum(!partdata$case & partdata$lop_nr %in% can$LopNr),
           " controls that have a diagnosis of the given cancer.")
   if(remove){
-    partdata <- partdata %>% filter(verified) %>% select(-verified)
     warning("These ",with(partdata,sum(case & !verified))," cases and their corresponding ",
             with(partdata,sum(case & !verified))," controls have been removed.")
+    partdata <- partdata %>% filter(verified) %>% select(-verified)
   }
   return(partdata)
 }
