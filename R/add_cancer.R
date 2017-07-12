@@ -41,7 +41,7 @@ add_cancer <- function(part_data,dx_path,wd=getwd(),ignore=NULL){
                             after_time=c(x[["after_time1"]],x[["after_time2"]]),
                             cancer=T,
                             exclude_outside=x[["exclude_outside"]],
-                            ignore= variable_name %in% ignore)
+                            ignore= x[["variable_name"]] %in% ignore)
                           }
   )
 
