@@ -3,4 +3,15 @@
 .RData
 .Ruserdata
 .DS_Store
+
+# General python cache
+__pychache__/
+*.py[cod]
+
+# jupyter cache
+.ipynb_checkpoints/
+
+# config.py is system specific.
+# Instead, upload config_example.py
 config.py
+
