@@ -177,28 +177,73 @@ class Dors(Base):
     foddatn = Column(Date)
     dodsdat = Column(String(8))
     ar = Column(Integer)
-
     icd = Column(String(8))
     kon = Column(Integer)
     lkf = Column(Integer)
     ulorsak = Column(String(8))
     kap19 = Column(String(8))
     alder = Column(String(8))
-    fodland = Column(String(8))
+    fodland = Column(String(32))
     dodutl = Column(String(8))
     kap17 = Column(String(8))
 
+    # That's a LOOOOOT of columns...
+    morsak1 = Column(String(8))
+    morsak2 = Column(String(8))
+    morsak3 = Column(String(8))
+    morsak4 = Column(String(8))
+    morsak5 = Column(String(8))
+    morsak6 = Column(String(8))
+    morsak7 = Column(String(8))
+    morsak8 = Column(String(8))
+    morsak9 = Column(String(8))
+    morsak10 = Column(String(8))
+    morsak11= Column(String(8))
+    morsak12 = Column(String(8))
+    morsak13 = Column(String(8))
+    morsak14 = Column(String(8))
+    morsak15 = Column(String(8))
+    morsak16 = Column(String(8))
+    morsak17 = Column(String(8))
+    morsak18 = Column(String(8))
+    morsak19 = Column(String(8))
+    morsak20 = Column(String(8))
+    morsak21 = Column(String(8))
+    morsak22 = Column(String(8))
+    morsak23 = Column(String(8))
+    morsak24 = Column(String(8))
+    morsak25 = Column(String(8))
+    morsak26 = Column(String(8))
+    morsak27 = Column(String(8))
+    morsak28 = Column(String(8))
+    morsak29 = Column(String(8))
+    morsak30 = Column(String(8))
+    morsak31 = Column(String(8))
+    morsak32 = Column(String(8))
+    morsak33 = Column(String(8))
+    morsak34 = Column(String(8))
+    morsak35 = Column(String(8))
+    morsak36 = Column(String(8))
+    morsak37 = Column(String(8))
+    morsak38 = Column(String(8))
+    morsak39 = Column(String(8))
+    morsak40 = Column(String(8))
+    morsak41 = Column(String(8))
+    morsak42 = Column(String(8))
+    morsak43 = Column(String(8))
+    morsak44 = Column(String(8))
+    morsak45 = Column(String(8))
+    morsak46 = Column(String(8))
+    morsak47 = Column(String(8))
+    morsak48 = Column(String(8))
+
+    # And some more.
+    dbgrund1 = Column(String(8))
+    dbgrund5 = Column(String(8))
+    dbgrund7 = Column(String(8))
+    dbgrund8 = Column(String(8))
+
     participant = relationship("Participant", back_populates="dors")
-
-
-
-# Add some attributes to Dors, systematically.
-for i in range(48):
-    setattr(Dors, ("morsak%d" % i), String(8))
-
-# Add some more attributes to Dors, systematically.
-for i in [1, 5, 7, 8]:
-    setattr(Dors, ("dbgrund%d" % i), String(8))
 
 
 class Sv(Base):
@@ -227,7 +272,7 @@ class Sv(Base):
     indatum = Column(Date)
     indatuma = Column(String(8))
     kon = Column(Integer)
-    mvo = Column(Integer)
+    mvo = Column(String(8))
     op = Column(String(1024))
     sjukhus = Column(Integer)
     utdatum = Column(Date)
@@ -262,7 +307,7 @@ class Ov(Base):
     indatum = Column(Date())
     indatuma = Column(String(8))
     kon = Column(Integer())
-    mvo = Column(Integer())
+    mvo = Column(String(8))
     op = Column(String(1024))
     sjukhus = Column(Integer())
     lk = Column(Integer())
