@@ -49,12 +49,12 @@ add_event <- function(dx,
   #if exclusion is chosen as T then we will find those that have the diagnoses outside the timelimits provided and exclude them.
   #We start by marking those that this applies to
   if(exclude_outside==T){
-    exclude_dia_data <- filter(dia_data,(time_from_incl < before_time[1] | time_from_incl > before_time[2]) & (time_from_incl < after_time[1] | time_from_incl > after_time[2]))
+    exclude_dia_data <- filter(dia_data,(time_from_incl <= before_time[1] | time_from_incl >= before_time[2]) & (time_from_incl <= after_time[1] | time_from_incl >= after_time[2]))
     part_data$exclude <- part_data$lop_nr %in% exclude_dia_data$lop_nr
   }
 
   #if first, we will find the first diagnosis of dx within the dataset
-  dia_data <- filter(dia_data,(time_from_incl > before_time[1] & time_from_incl < before_time[2]) | (time_from_incl > after_time[1] & time_from_incl < after_time[2]))  %>%
+  dia_data <- filter(dia_data,(time_from_incl >= before_time[1] & time_from_incl <= before_time[2]) | (time_from_incl >= after_time[1] & time_from_incl <= after_time[2]))  %>%
     group_by(lop_nr)
 
   if(relationship=="first"){
