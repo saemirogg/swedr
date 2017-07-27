@@ -3,7 +3,7 @@
 extract_binary <-function(part_data,vars){
   require(dplyr)
   require(magrittr)
-  binary_data <- part_data %>% mutate_each_(funs=funs(is.na),vars=vars) %>%
-    mutate_each_(funs=funs(not),vars=vars)
+  binary_data <- part_data %>% mutate_at(.funs=funs(is.na),.vars=vars) %>%
+    mutate_at(.funs=funs(not),.vars=vars)
   return(binary_data)
 }
