@@ -44,7 +44,10 @@ add_event <- function(dx,
   #Adding inclusion date and time from inclusion date of the diagnosis
   dia_data$incl_date <- part_data$incl_date[match(dia_data$lop_nr,part_data$lop_nr)]
   dia_data$time_from_incl <- days_diff(dia_data$incl_date,dia_data$INDATUMA)
-
+  
+  #We have had occational errors with the before_time and after_time being character variables. Therefore we change it now to numeric vectors.
+  before_time <- as.numeric(before_time)
+  after_time <- as.numeric(after_time)
 
   #if exclusion is chosen as T then we will find those that have the diagnoses outside the timelimits provided and exclude them.
   #We start by marking those that this applies to
